@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>No More Boredom</title>
+</head>
+<style>
+    body {
+        text-align: center;
+        font-family: Arial;
+        background-color: #f0f8ff;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 18px;
+        background-color: blue;
+        color: white;
+        border: none;
+        border-radius: 10px;
+    }
+</style>
+<body>
+
+    <h1>Feeling Bored? 😩</h1>
+    <p>Click the button to make your time useful!</p>
+
+    <button onclick="showTask()">I’m Bored</button>
+
+    <p id="task"></p>
+    <script>
+    function showTask() {
+        let tasks = [
+            "Speak about your mother for 1 minute 🎤",
+            "Learn 3 new English words 📘",
+            "Write 5 lines about your day ✍️",
+            "Solve a simple math problem 🧠",
+            "Read one page of a book 📖"
+        ];
+
+        let random = Math.floor(Math.random() * tasks.length);
+        document.getElementById("task").innerHTML = tasks[random];
+    }
+    </script>
+
+</body>
+</html>
+
+
+
+
+
