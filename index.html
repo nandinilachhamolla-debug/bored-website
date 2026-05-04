@@ -44,6 +44,54 @@
 
 </body>
 </html>
+<p id="task"></p>
+<p id="timer"></p>
+
+<button onclick="startTask()">I’m Bored</button>
+
+<script>
+function startTask() {
+    document.getElementById("task").innerHTML = "Speak for 1 minute 🎤";
+
+    let time = 60;
+    let timer = setInterval(function() {
+        document.getElementById("timer").innerHTML = "Time left: " + time + " sec";
+        time--;
+
+        if (time < 0) {
+            clearInterval(timer);
+            document.getElementById("timer").innerHTML = "Time's up! ⏰";
+        }
+    }, 1000);
+}
+</script>
+<textarea placeholder="Write here..." rows="4" cols="30"></textarea>
+<br>
+<button onclick="submitText()">Submit</button>
+
+<p id="result"></p>
+
+<script>
+function submitText() {
+    document.getElementById("result").innerHTML = "Good job! Keep practicing 👍";
+}
+</script>
+<p>What is 2 + 2?</p>
+<input type="text" id="answer">
+<button onclick="checkAnswer()">Submit</button>
+
+<p id="quizResult"></p>
+
+<script>
+function checkAnswer() {
+    let ans = document.getElementById("answer").value;
+    if(ans == "4") {
+        document.getElementById("quizResult").innerHTML = "Correct! 🎉";
+    } else {
+        document.getElementById("quizResult").innerHTML = "Try again!";
+    }
+}
+</script>
 
 
 
