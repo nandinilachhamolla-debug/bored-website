@@ -2,58 +2,120 @@
 <html>
 <head>
     <title>No More Boredom</title>
-</head>
-<style>
-    body {
-        text-align: center;
-        font-family: Arial;
-        background-color: #f0f8ff;
-    }
 
-    button {
-        padding: 10px 20px;
-        font-size: 18px;
-        background-color: blue;
-        color: white;
-        border: none;
-        border-radius: 10px;
-    }
-</style>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: linear-gradient(to right, #74ebd5, #acb6e5);
+            margin-top: 50px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        button {
+            padding: 12px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 20px;
+            background-color: #ff6b6b;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ff3b3b;
+        }
+
+        #task {
+            font-size: 20px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        #timer {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        textarea {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+        }
+    </style>
+</head>
+
 <body>
 
     <h1>Feeling Bored? 😩</h1>
-    <p>Click the button to make your time useful!</p>
+    <p>Choose an activity and make your time useful!</p>
 
-    <button onclick="showTask()">I’m Bored</button>
+    <!-- CATEGORY BUTTONS -->
+    <button onclick="startTask('english')">English</button>
+    <button onclick="startTask('brain')">Brain</button>
+    <button onclick="startTask('fun')">Fun</button>
 
+    <!-- OUTPUT -->
     <p id="task"></p>
-    <script>
-    function showTask() {
-        let tasks = [
-            "Speak about your mother for 1 minute 🎤",
-            "Learn 3 new English words 📘",
-            "Write 5 lines about your day ✍️",
-            "Solve a simple math problem 🧠",
-            "Read one page of a book 📖"
-        ];
+    <p id="timer"></p>
 
-        let random = Math.floor(Math.random() * tasks.length);
-        document.getElementById("task").innerHTML = tasks[random];
-    }
-    </script>
+    <!-- WRITING BOX -->
+     
+    <div id="writingBox"></div>
 
-</body>
-</html>
-<p id="task"></p>
-<p id="timer"></p>
+    <!-- STREAK -->
+    <p>Streak: <span id="streak">0</span></p>
 
-<button onclick="startTask()">I’m Bored</button>
+    <!-- MOTIVATION -->
+    <p id="motivation"></p>
 
 <script>
-function startTask() {
-    document.getElementById("task").innerHTML = "Speak for 1 minute 🎤";
+let streak = 0;
 
-    let time = 60;
+function startTask(type) {
+
+    let tasks = {
+        english: [
+            "Speak about your best friend 🎤",
+            "Write 5 lines about your day ✍️"
+        ],
+        brain: [
+            "What is 5 + 7? 🧠",
+            "Find next number: 2,4,6,?"
+        ],
+        fun: [
+            "Smile for 30 seconds 😄",
+            "Draw something ✏️"
+        ]
+    };
+
+    let random = Math.floor(Math.random() * tasks[type].length);
+    let selectedTask = tasks[type][random];
+
+    document.getElementById("task").innerHTML = selectedTask;
+
+    // Start Timer
+    startTimer();
+
+    // Show writing box if needed
+    if(selectedTask.includes("Write")) {
+        document.getElementById("writingBox").innerHTML =
+        `<textarea rows="4" cols="30" placeholder="Write here..."></textarea>
+         <br><button onclick="completeTask()">Done</button>`;
+    } else {
+        document.getElementById("writingBox").innerHTML =
+        `<br><button onclick="completeTask()">Done</button>`;
+    }
+}
+
+// TIMER
+function startTimer() {
+    let time = 30;
     let timer = setInterval(function() {
         document.getElementById("timer").innerHTML = "Time left: " + time + " sec";
         time--;
@@ -64,36 +126,22 @@ function startTask() {
         }
     }, 1000);
 }
-</script>
-<textarea placeholder="Write here..." rows="4" cols="30"></textarea>
-<br>
-<button onclick="submitText()">Submit</button>
 
-<p id="result"></p>
+// COMPLETE TASK
+function completeTask() {
+    streak++;
+    document.getElementById("streak").innerHTML = streak;
 
-<script>
-function submitText() {
-    document.getElementById("result").innerHTML = "Good job! Keep practicing 👍";
-}
-</script>
-<p>What is 2 + 2?</p>
-<input type="text" id="answer">
-<button onclick="checkAnswer()">Submit</button>
+    let messages = [
+        "Great job! 🌟",
+        "Keep going! 💪",
+        "You are improving! 🚀"
+    ];
 
-<p id="quizResult"></p>
-
-<script>
-function checkAnswer() {
-    let ans = document.getElementById("answer").value;
-    if(ans == "4") {
-        document.getElementById("quizResult").innerHTML = "Correct! 🎉";
-    } else {
-        document.getElementById("quizResult").innerHTML = "Try again!";
-    }
+    let random = Math.floor(Math.random() * messages.length);
+    document.getElementById("motivation").innerHTML = messages[random];
 }
 </script>
 
-
-
-
-
+</body>
+</html>
