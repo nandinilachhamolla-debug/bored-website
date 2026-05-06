@@ -18,6 +18,7 @@ button {
     border-radius: 10px;
     background: blue;
     color: white;
+    cursor: pointer;
 }
 
 textarea {
@@ -50,12 +51,13 @@ textarea {
 <p id="task"></p>
 <p id="timer"></p>
 
-<!-- Writing Box -->
 <div id="writingBox"></div>
 
 <button onclick="startVoice()">🎤 Speak</button>
 <br>
 <button id="doneBtn" onclick="completeTask()" disabled>Done</button>
+
+<p id="motivation"></p>
 
 <h3>🔥 Weekly Streak</h3>
 <div id="week"></div>
@@ -64,7 +66,18 @@ textarea {
 
 let canComplete = false;
 
-// 10 TASKS (mix of speaking + writing)
+// DAILY REMINDER
+window.onload = function() {
+    let lastVisit = localStorage.getItem("lastVisit");
+    let today = new Date().toDateString();
+
+    if(lastVisit !== today) {
+        alert("Hey! Complete your activity today 💪");
+        localStorage.setItem("lastVisit", today);
+    }
+}
+
+// TASK LIST
 let tasks = [
 {type:"speak", text:"Speak about your goal 🎤"},
 {type:"speak", text:"Speak about your best friend 🎤"},
@@ -86,7 +99,6 @@ function startTask() {
 
     document.getElementById("task").innerHTML = task.text;
 
-    // Show writing box only for writing tasks
     if(task.type === "write") {
         document.getElementById("writingBox").innerHTML =
         `<textarea id="textInput" placeholder="Write here..."></textarea>`;
@@ -97,7 +109,7 @@ function startTask() {
     startTimer();
 }
 
-// TIMER (60 seconds)
+// TIMER (60 sec)
 function startTimer() {
     let time = 60;
     canComplete = false;
@@ -137,6 +149,15 @@ function startVoice() {
     };
 }
 
+// MOTIVATION MESSAGES
+let messages = [
+"Great job! Keep going 💪",
+"You are improving every day 🚀",
+"Consistency is key 🔥",
+"Small steps lead to big success 🌟",
+"You're doing amazing 👏"
+];
+
 // COMPLETE TASK
 function completeTask() {
     if(!canComplete) {
@@ -151,6 +172,10 @@ function completeTask() {
 
     localStorage.setItem("week", JSON.stringify(data));
     renderWeek();
+
+    // SHOW MOTIVATION
+    let random = Math.floor(Math.random() * messages.length);
+    document.getElementById("motivation").innerHTML = messages[random];
 }
 
 // WEEK DISPLAY
