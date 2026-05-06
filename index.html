@@ -1,146 +1,173 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>No More Boredom</title>
+<title>No More Boredom</title>
 
-    <style>
-        body {
-            font-family: Arial;
-            text-align: center;
-            background: linear-gradient(to right, #74ebd5, #acb6e5);
-            margin-top: 50px;
-        }
+<style>
+body {
+    font-family: Arial;
+    text-align: center;
+    background: #f0f8ff;
+}
 
-        h1 {
-            color: #333;
-        }
+button {
+    padding: 10px 20px;
+    margin: 8px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    background: blue;
+    color: white;
+}
 
-        button {
-            padding: 12px 20px;
-            margin: 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 20px;
-            background-color: #ff6b6b;
-            color: white;
-            cursor: pointer;
-        }
+textarea {
+    width: 80%;
+    height: 80px;
+    margin-top: 10px;
+}
 
-        button:hover {
-            background-color: #ff3b3b;
-        }
+.day {
+    display: inline-block;
+    padding: 6px;
+    margin: 3px;
+    background: lightgray;
+    border-radius: 5px;
+}
 
-        #task {
-            font-size: 20px;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-
-        #timer {
-            font-size: 18px;
-            margin-top: 10px;
-        }
-
-        textarea {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 10px;
-            border: none;
-        }
-    </style>
+.active {
+    background: green;
+    color: white;
+}
+</style>
 </head>
 
 <body>
 
-    <h1>Feeling Bored? 😩</h1>
-    <p>Choose an activity and make your time useful!</p>
+<h1>Feeling Bored? 😩</h1>
 
-    <!-- CATEGORY BUTTONS -->
-    <button onclick="startTask('english')">English</button>
-    <button onclick="startTask('brain')">Brain</button>
-    <button onclick="startTask('fun')">Fun</button>
+<button onclick="startTask()">Start Activity</button>
 
-    <!-- OUTPUT -->
-    <p id="task"></p>
-    <p id="timer"></p>
+<p id="task"></p>
+<p id="timer"></p>
 
-    <!-- WRITING BOX -->
-     
-    <div id="writingBox"></div>
+<!-- Writing Box -->
+<div id="writingBox"></div>
 
-    <!-- STREAK -->
-    <p>Streak: <span id="streak">0</span></p>
+<button onclick="startVoice()">🎤 Speak</button>
+<br>
+<button id="doneBtn" onclick="completeTask()" disabled>Done</button>
 
-    <!-- MOTIVATION -->
-    <p id="motivation"></p>
+<h3>🔥 Weekly Streak</h3>
+<div id="week"></div>
 
 <script>
-let streak = 0;
 
-function startTask(type) {
+let canComplete = false;
 
-    let tasks = {
-        english: [
-            "Speak about your best friend 🎤",
-            "Write 5 lines about your day ✍️"
-        ],
-        brain: [
-            "What is 5 + 7? 🧠",
-            "Find next number: 2,4,6,?"
-        ],
-        fun: [
-            "Smile for 30 seconds 😄",
-            "Draw something ✏️"
-        ]
-    };
+// 10 TASKS (mix of speaking + writing)
+let tasks = [
+{type:"speak", text:"Speak about your goal 🎤"},
+{type:"speak", text:"Speak about your best friend 🎤"},
+{type:"speak", text:"Explain your favorite movie 🎬"},
+{type:"speak", text:"Describe your daily routine 📅"},
+{type:"speak", text:"Talk about your dream job 💼"},
 
-    let random = Math.floor(Math.random() * tasks[type].length);
-    let selectedTask = tasks[type][random];
+{type:"write", text:"Write 5 lines about your day ✍️"},
+{type:"write", text:"Write about your favorite teacher ✍️"},
+{type:"write", text:"Write about your hometown ✍️"},
+{type:"write", text:"Write about your role model ✍️"},
+{type:"write", text:"Write about your favorite subject ✍️"}
+];
 
-    document.getElementById("task").innerHTML = selectedTask;
+// START TASK
+function startTask() {
+    let random = Math.floor(Math.random() * tasks.length);
+    let task = tasks[random];
 
-    // Start Timer
-    startTimer();
+    document.getElementById("task").innerHTML = task.text;
 
-    // Show writing box if needed
-    if(selectedTask.includes("Write")) {
+    // Show writing box only for writing tasks
+    if(task.type === "write") {
         document.getElementById("writingBox").innerHTML =
-        `<textarea rows="4" cols="30" placeholder="Write here..."></textarea>
-         <br><button onclick="completeTask()">Done</button>`;
+        `<textarea id="textInput" placeholder="Write here..."></textarea>`;
     } else {
-        document.getElementById("writingBox").innerHTML =
-        `<br><button onclick="completeTask()">Done</button>`;
+        document.getElementById("writingBox").innerHTML = "";
     }
+
+    startTimer();
 }
 
-// TIMER
+// TIMER (60 seconds)
 function startTimer() {
-    let time = 30;
-    let timer = setInterval(function() {
-        document.getElementById("timer").innerHTML = "Time left: " + time + " sec";
+    let time = 60;
+    canComplete = false;
+    document.getElementById("doneBtn").disabled = true;
+
+    let t = setInterval(() => {
+        document.getElementById("timer").innerHTML = "Time: " + time + " sec";
         time--;
 
-        if (time < 0) {
-            clearInterval(timer);
-            document.getElementById("timer").innerHTML = "Time's up! ⏰";
+        if(time < 0) {
+            clearInterval(t);
+            document.getElementById("timer").innerHTML = "Now you can click Done ✅";
+            canComplete = true;
+            document.getElementById("doneBtn").disabled = false;
         }
     }, 1000);
 }
 
+// VOICE FEATURE
+function startVoice() {
+    if (!('webkitSpeechRecognition' in window)) {
+        alert("Voice not supported");
+        return;
+    }
+
+    let recognition = new webkitSpeechRecognition();
+    recognition.start();
+
+    recognition.onstart = () => {
+        document.getElementById("task").innerHTML = "Listening... 🎤";
+    };
+
+    recognition.onresult = () => {
+        canComplete = true;
+        document.getElementById("doneBtn").disabled = false;
+        document.getElementById("task").innerHTML = "Good speaking! ✅";
+    };
+}
+
 // COMPLETE TASK
 function completeTask() {
-    streak++;
-    document.getElementById("streak").innerHTML = streak;
+    if(!canComplete) {
+        alert("Do the activity first!");
+        return;
+    }
 
-    let messages = [
-        "Great job! 🌟",
-        "Keep going! 💪",
-        "You are improving! 🚀"
-    ];
+    let today = new Date().getDay();
 
-    let random = Math.floor(Math.random() * messages.length);
-    document.getElementById("motivation").innerHTML = messages[random];
+    let data = JSON.parse(localStorage.getItem("week")) || [0,0,0,0,0,0,0];
+    data[today] = 1;
+
+    localStorage.setItem("week", JSON.stringify(data));
+    renderWeek();
 }
+
+// WEEK DISPLAY
+function renderWeek() {
+    let days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    let data = JSON.parse(localStorage.getItem("week")) || [0,0,0,0,0,0,0];
+
+    let html = "";
+    for(let i=0;i<7;i++){
+        html += `<span class="day ${data[i] ? 'active' : ''}">${days[i]}</span>`;
+    }
+
+    document.getElementById("week").innerHTML = html;
+}
+
+renderWeek();
+
 </script>
 
 </body>
